@@ -1,0 +1,280 @@
+/* =========================
+   Root Theme Variables
+   ========================= */
+:root {
+  --bg: #0f172a;             /* Background: slate-900 */
+  --panel: #111827;          /* Panel: gray-900 */
+  --card: #131d31;           /* Card: custom, deeper blue */
+  --text: #e5e7eb;           /* Main text: gray-200 */
+  --muted: #9ca3af;          /* Muted text: gray-400 */
+  --accent: #f97316;         /* Accent: orange-500 */
+  --green: #10b981;          /* Green: emerald-500 */
+  --yellow: #f59e0b;         /* Yellow: amber-500 */
+  --red: #ef4444;            /* Red: red-500 */
+  --chip-bg: #1f2937;        /* Chip: gray-800 */
+  --chip-br: 999px;
+  --radius: 16px;
+  --shadow: 0 8px 24px rgba(0,0,0,0.17);
+}
+
+/* =========================
+   Base Layout & Body
+   ========================= */
+html, body, .block-container {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-kerning: normal;
+  padding-top: 3rem !important;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 { 
+  letter-spacing: 0.2px; 
+}
+
+.section-note {
+  background: #14203a;
+  border: 1px solid #1e293b;
+  color: #cbd5e1;
+  padding: 10px 12px;
+  border-radius: 10px;
+}
+
+/* =========================
+   Metric Cards
+   ========================= */
+.metric-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin: 6px 0 14px 0;
+}
+.metric-card {
+  background: var(--panel);
+  border: 1px solid #1f2937;
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  box-shadow: var(--shadow);
+}
+.metric-title {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+.metric-value {
+  font-size: 22px;
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+/* =========================
+   Job Card Layout
+   ========================= */
+.job-card {
+  background: var(--card);
+  border: 1px solid #22304a;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px 20px 18px 22px;
+  margin: 12px 0 18px 0;
+  transition: box-shadow 0.2s, border 0.2s;
+}
+.job-card:hover {
+  box-shadow: 0 16px 32px rgba(0,0,0,0.21);
+  border-color: var(--accent);
+}
+
+.job-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.job-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: var(--panel);
+  border: 1px solid #1f2937;
+  color: var(--text);
+  text-decoration: none;
+  transition: border 0.18s, color 0.18s;
+}
+.view-btn:hover {
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.job-sub {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.dot { padding: 0 6px; color: #334155; }
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.chip {
+  background: var(--chip-bg);
+  color: var(--text);
+  padding: 6px 10px;
+  border-radius: var(--chip-br);
+  font-size: 12px;
+  border: 1px solid #263042;
+}
+.chip--ok { border-color: var(--green); }
+.chip--warn { border-color: var(--yellow); }
+.chip--err { border-color: var(--red); }
+
+/* =========================
+   Description Section
+   ========================= */
+.desc {
+  margin-top: 10px;
+  border-top: 1px dashed #23304a;
+  padding-top: 10px;
+}
+.desc summary {
+  cursor: pointer;
+  list-style: none;
+  color: var(--muted);
+}
+.desc summary::-webkit-details-marker { display: none; }
+.desc-body {
+  white-space: pre-wrap;
+  line-height: 1.5;
+  color: #cbd5e1;
+  margin-top: 8px;
+}
+
+/* Description Box */
+.desc-box {
+  margin-top: 10px;
+  background: #17223b;
+  border: 1px solid #263042;
+  border-radius: 12px;
+  padding: 12px 15px 14px 15px;
+  color: #cbd5e1;
+  font-size: 15px;
+  line-height: 1.38;
+  max-height: 170px;
+  overflow-y: auto;
+  white-space: normal;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.13);
+  position: relative;
+  word-break: break-word;
+}
+.desc-box p, .desc-box br {
+  margin: 0; padding: 0; display: inline;
+}
+.desc-box::-webkit-scrollbar {
+  width: 7px; background: #1a2235;
+}
+.desc-box::-webkit-scrollbar-thumb {
+  background: #22304a; border-radius: 5px;
+}
+.desc-fade {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 28px;
+  background: linear-gradient(transparent, #17223b 85%);
+  pointer-events: none;
+  border-radius: 0 0 12px 12px;
+}
+
+/* =========================
+   Extracted Info Box
+   ========================= */
+.extracted-info {
+    background: rgba(22, 32, 46, 0.98); /* More blue, subtle transparency */
+    color: #f3fafc;
+    border-radius: 16px;
+    border-left: 6px solid #34d399;
+    border-right: 1px solid #243042;
+    padding: 18px 24px 16px 24px;
+    margin: 18px 0 10px 0;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.11);
+    font-size: 1.04rem;
+    transition: box-shadow 0.18s;
+}
+.extracted-info b {
+    color: #6ff7cb;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+}
+.extracted-info ul {
+    margin: 0;
+    padding: 0 0 0 18px;
+}
+.extracted-info li {
+    margin-bottom: 4px;
+    line-height: 1.66;
+    list-style-type: disc;
+    color: #d0f1e8;
+}
+.extracted-info li:last-child { margin-bottom: 0; }
+
+/* =========================
+   Misc / Utility
+   ========================= */
+.export-row, .searchbar {
+  display: flex; gap: 10px; align-items: center;
+}
+.export-row { justify-content: flex-end; margin-bottom: 10px; }
+.searchbar { margin: 8px 0 16px 0; }
+.searchbar input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #0b1220;
+  border: 1px solid #1f2937;
+  color: var(--text);
+}
+
+/* Improve scrollbar for whole app if desired */
+::-webkit-scrollbar { width: 8px; background: #17223b; }
+::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 8px; }
+
+/* Optional: Responsive for cards on smaller screens */
+@media (max-width: 900px) {
+  .metric-row { grid-template-columns: 1fr 1fr; }
+  .job-header { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .job-title { font-size: 16px; }
+}
+
+.enhanced-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 22px;
+  background: #162038;
+  border-radius: 10px;
+  padding: 12px 18px;
+  margin-top: 14px;
+  margin-bottom: 10px;
+  color: #e3fbf6;
+  font-size: 14px;
+}
+.enhanced-grid b {
+  color: #59e6c4;
+}
+
+
+/* =========================
+   End of File
+   ========================= */

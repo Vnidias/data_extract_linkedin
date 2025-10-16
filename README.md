@@ -1,28 +1,30 @@
 # scrapping-linkedin 🔎💼
 
-![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
-![Requests](https://img.shields.io/badge/requests-%E2%9C%93-lightgrey)
-![dateutil](https://img.shields.io/badge/python--dateutil-%E2%9C%93-lightgrey)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue)  
+![Requests](https://img.shields.io/badge/requests-%E2%9C%93-lightgrey)  
+![dateutil](https://img.shields.io/badge/python--dateutil-%E2%9C%93-lightgrey)  
+![Streamlit](https://img.shields.io/badge/streamlit-UI-orange)  
 ![OS](https://img.shields.io/badge/Windows%20%7C%20macOS%20%7C%20Linux-OK-success)
 
-Scrape **LinkedIn Jobs** through **ScrapingDog** for the Netherlands and export results to **JSON** and **CSV**. Includes a **description fetch** step (via job overview) and a **July 2025 filter**.
+Scrape **LinkedIn Jobs** through **ScrapingDog** for the Netherlands and export results to **JSON** and **CSV**.  
+Includes a **description fetch** step (via job overview), a **July 2025 filter**, and an optional **Streamlit UI** for interactive browsing.
 
-> **Zero BS goal:** new users should be able to run this in minutes without leaking secrets.
+> **Zero BS goal:** Run in minutes, control API usage, browse jobs with a clean UI.
 
 ---
 
-## ✨ What you get
+## ✨ Features
 
 * 🇳🇱 Focus on the **Netherlands** (`geoId = 102890719`).
-* 🔁 Auto-pagination until the API returns an empty page.
-* 📝 Job **descriptions** pulled via the **overview** endpoint (per `job_id`).
-* 📅 **July 2025** filter (01–31 inclusive) baked-in (one script) and a **tiny 2‑job test** script.
-* 🧯 Rate‑limit safe (exponential backoff + jitter; honors `Retry-After`).
+* 🔁 Auto-pagination until no more results.
+* 📝 Job **descriptions** pulled via overview calls (per `job_id`).
+* 📅 **July 2025 filter** baked in (01–31 inclusive).
+* 🧯 Rate-limit safe: exponential backoff + jitter, honors `Retry-After`.
 * 🧰 Clean outputs:
-
   * `li_jobs_2025-07_with_desc.json`
   * `li_jobs_2025-07_with_desc.csv`
-  * (test) `li_jobs_sample_with_desc.json` / `.csv`
+* 🎛️ **Credit saver**: limit to *N* descriptions or *N* listings via env vars.
+* 🎨 **Streamlit app**: friendly UI for filters, search, expandable descriptions, and downloads.
 
 ---
 
@@ -30,11 +32,13 @@ Scrape **LinkedIn Jobs** through **ScrapingDog** for the Netherlands and export 
 
 ```
 .
-├─ li_july_2025_with_desc.py       # Full July-only run, no artificial cap
-├─ li_test_2_jobs_with_desc.py     # Minimal sanity test (2 jobs) with descriptions
-├─ requirements.txt                # requests + python-dateutil
-├─ .gitignore                      # ignores __pycache__, outputs, .env, etc.
-├─ .env.example                    # template for your key (not auto-loaded)
+├─ li_july_2025_with_desc.py       # Full July-only scrape (env-driven)
+├─ li_test_2_jobs_with_desc.py     # Minimal test (2 jobs)
+├─ streamlit_app.py                # Streamlit UI wrapper
+├─ requirements.txt                # CLI scraper deps
+├─ requirements_streamlit.txt      # Streamlit UI deps
+├─ .env.example                    # template for env vars
+├─ .gitignore                      # ignores outputs, .env, cache
 └─ README.md                       # this file
 ```
 
@@ -42,50 +46,53 @@ Scrape **LinkedIn Jobs** through **ScrapingDog** for the Netherlands and export 
 
 ## ✅ Prerequisites
 
-* **Python 3.10+** installed and on PATH (`python --version`).
-* A **ScrapingDog API key** with the LinkedIn Jobs feature enabled.
-* Basic terminal usage (PowerShell on Windows / bash on macOS/Linux).
-
-> We **do not** auto-read `.env`. Set environment variables in your shell (examples below). `.env.example` is just a template you can copy from.
+* **Python 3.10+**  
+* **ScrapingDog API key** with LinkedIn Jobs enabled  
+* Basic terminal usage (PowerShell on Windows / bash on macOS/Linux)
 
 ---
 
-## 🚀 Quick start
+## 🚀 Quick start (CLI)
 
 ### Windows (PowerShell)
 
 ```powershell
-# 1) Get deps
+# Install deps
 python -m pip install -r requirements.txt
 
-# 2) Set env vars for this session
+# Set env vars
 $env:SCRAPINGDOG_API_KEY = "YOUR_KEY"
-$env:FIELD = "data engineer"        # keywords
-# Optional filters to narrow results (all are optional):
+$env:FIELD = "data engineer"
+# Optional:
 # $env:LOCATION = "Amsterdam"
-# $env:SORT_BY  = "month"            # "day" | "week" | "month" | "" (empty)
-# $env:JOB_TYPE = "full_time"        # temporary|contract|volunteer|full_time|part_time
-# $env:EXP_LEVEL = "associate"       # internship|entry_level|associate|mid_senior_level|director
-# $env:WORK_TYPE = "hybrid"          # at_work|remote|hybrid
-# $env:FILTER_BY_COMPANY = "123456"  # LinkedIn company ID
+# $env:SORT_BY = "month"
+# $env:JOB_TYPE = "full_time"
+# $env:EXP_LEVEL = "associate"
+# $env:WORK_TYPE = "hybrid"
+# $env:FILTER_BY_COMPANY = "123456"
 
-# 3) Sanity test (fetch 2 jobs + descriptions)
+# Optional credit caps
+$env:MAX_OVERVIEWS = "2"   # stop after 2 descriptions
+$env:MAX_LISTINGS  = "20"  # stop after 20 listings
+
+# Sanity test
 python .\li_test_2_jobs_with_desc.py
 
-# 4) Full July run (fetch descriptions only for July 2025)
+# Full run
 python .\li_july_2025_with_desc.py
 ```
 
-### macOS / Linux (bash/zsh)
+### macOS / Linux (bash)
 
 ```bash
-# 1) Get deps
+# Install deps
 python3 -m pip install -r requirements.txt
 
-# 2) Set env vars for this shell session
+# Set env vars
 export SCRAPINGDOG_API_KEY="YOUR_KEY"
 export FIELD="data engineer"
-# Optional filters:
+
+# Optional filters...
 # export LOCATION="Amsterdam"
 # export SORT_BY="month"
 # export JOB_TYPE="full_time"
@@ -93,191 +100,97 @@ export FIELD="data engineer"
 # export WORK_TYPE="hybrid"
 # export FILTER_BY_COMPANY="123456"
 
-# 3) Sanity test
+# Optional credit caps
+export MAX_OVERVIEWS=2
+export MAX_LISTINGS=20
+
+# Sanity test
 python3 li_test_2_jobs_with_desc.py
 
-# 4) Full July run
+# Full run
 python3 li_july_2025_with_desc.py
 ```
 
-> **Pro tip (Windows):** to persist the key across new shells, use `setx` once: `setx SCRAPINGDOG_API_KEY "YOUR_KEY"` (applies to *new* PowerShell windows).
-
 ---
 
-## ⚙️ Configuration (env vars)
+## ⚙️ Environment variables
 
-| Variable              | Required | Example                  | What it does                                                  |              |           |                    |              |
-| --------------------- | -------- | ------------------------ | ------------------------------------------------------------- | ------------ | --------- | ------------------ | ------------ |
-| `SCRAPINGDOG_API_KEY` | ✅        | `sk_live_...`            | Auth token for ScrapingDog.                                   |              |           |                    |              |
-| `FIELD`               | ✅        | `data engineer`          | Keywords / title to search for.                               |              |           |                    |              |
-| `GEOID`               | ❌        | `102890719`              | LinkedIn **geoId** for country/region. Default = Netherlands. |              |           |                    |              |
-| `LOCATION`            | ❌        | `Amsterdam`              | Free-text location (pairs with geoId).                        |              |           |                    |              |
-| `SORT_BY`             | ❌        | `day` / `week` / `month` | Relative time window (LinkedIn’s sort filter).                |              |           |                    |              |
-| `JOB_TYPE`            | ❌        | `full_time`              | \`temporary                                                   | contract     | volunteer | full\_time         | part\_time\` |
-| `EXP_LEVEL`           | ❌        | `associate`              | \`internship                                                  | entry\_level | associate | mid\_senior\_level | director\`   |
-| `WORK_TYPE`           | ❌        | `remote`                 | \`at\_work                                                    | remote       | hybrid\`  |                    |              |
-| `FILTER_BY_COMPANY`   | ❌        | `123456`                 | LinkedIn company ID to include only that company’s jobs.      |              |           |                    |              |
-| `BASE_DELAY`          | ❌        | `1.0`                    | Seconds between list pages (to avoid 429).                    |              |           |                    |              |
-| `OV_DELAY`            | ❌        | `0.6`                    | Seconds between overview (description) calls.                 |              |           |                    |              |
-
-> If you don’t know your `geoId` for a city, leaving `GEOID` at NL and setting `LOCATION="CityName"` works well.
+| Variable              | Required | Example          | Purpose                                    |
+|-----------------------|----------|------------------|--------------------------------------------|
+| `SCRAPINGDOG_API_KEY` | ✅        | `sk_live_...`    | Auth token for ScrapingDog                 |
+| `FIELD`               | ✅        | `data engineer`  | Search keywords                            |
+| `LOCATION`            | ❌        | `Amsterdam`      | Free-text location filter                  |
+| `SORT_BY`             | ❌        | `month`          | Time filter: `day` / `week` / `month`      |
+| `JOB_TYPE`            | ❌        | `full_time`      | Job type filter                            |
+| `EXP_LEVEL`           | ❌        | `associate`      | Experience level filter                    |
+| `WORK_TYPE`           | ❌        | `hybrid`         | On-site / Remote / Hybrid                  |
+| `FILTER_BY_COMPANY`   | ❌        | `123456`         | LinkedIn company ID                        |
+| `BASE_DELAY`          | ❌        | `1.0`            | Delay between listing page calls (seconds) |
+| `OV_DELAY`            | ❌        | `0.6`            | Delay between overview calls               |
+| `MAX_OVERVIEWS`       | ❌        | `2`              | Hard cap on description fetches (credits)  |
+| `MAX_LISTINGS`        | ❌        | `20`             | Hard cap on listing rows scanned           |
 
 ---
 
 ## 🧠 How it works
 
-1. **List phase** → Calls `https://api.scrapingdog.com/linkedinjobs` with your query and paging (`page=1,2,3...`).
-2. **Filter phase** → Checks `job_posting_date` for **July 2025**.
-3. **Overview phase** → For July hits only, calls the **same endpoint** with `job_id` to retrieve the **full description**.
-4. **Export** → Writes July-only **JSON** and **CSV**.
-
-This two‑pass approach keeps API usage efficient: **no overview calls** for non‑July items.
+1. **List phase** → query jobs by keyword + filters.  
+2. **Filter** → keep only jobs posted in **July 2025**.  
+3. **Overview** → fetch job descriptions for those jobs (capped by `MAX_OVERVIEWS` if set).  
+4. **Export** → save as `.json` and `.csv`.
 
 ---
 
 ## 📤 Outputs
 
-* `li_jobs_2025-07_with_desc.json` → structured objects with `job_id`, `job_position`, `company_name`, `job_location`, `job_link`, `job_posting_date`, `description`.
-* `li_jobs_2025-07_with_desc.csv` → same data as CSV.
-* (Test) `li_jobs_sample_with_desc.json` / `.csv` → 2‑job sample with descriptions.
-
-> Files are **git‑ignored** by default so you don’t accidentally commit data dumps.
+* `li_jobs_2025-07_with_desc.json` → JSON with `job_id`, `job_position`, `company_name`, `job_location`, `job_link`, `job_posting_date`, `description`.  
+* `li_jobs_2025-07_with_desc.csv` → CSV version of the same.  
+* `li_jobs_sample_with_desc.*` → test run with 2 jobs.
 
 ---
 
 ## 🧪 Troubleshooting
 
-**429 Too Many Requests**
-
-* You’re rate‑limited. Increase `BASE_DELAY` and `OV_DELAY`. The scripts already honor `Retry-After`, but being gentler helps.
-
-**Empty results**
-
-* Try different `FIELD` (e.g., `python developer`, `software engineer`). Add `LOCATION` like `Amsterdam`.
-* Set `SORT_BY="month"` to bias toward recent postings.
-
-**Descriptions are empty**
-
-* Some overview payloads vary. We extract from `description`/`job_description` and fall back to long string heuristics. If you find an odd case, open an issue with a redacted snippet and we’ll extend the parser.
-
-**CSV error: “fields not in fieldnames”**
-
-* We set `extrasaction="ignore"` in CSV writers to prevent this. If you build your own, keep fieldnames in sync.
-
-**Windows: `export` not recognized**
-
-* Use PowerShell syntax: `$env:NAME = "value"`. `export` is for bash.
+**429 Too Many Requests** → raise `BASE_DELAY` / `OV_DELAY`.  
+**Empty results** → try different `FIELD`, add `LOCATION`, or change `SORT_BY`.  
+**Descriptions missing** → not all overview payloads are consistent; parser has fallbacks.  
+**Windows**: use `$env:NAME = "value"`, not `export`.
 
 ---
 
-## 🔒 Secrets & safety
+## 🔒 Secrets
 
-* **Never** hardcode your API key in scripts or commit it to git. Use env vars.
-* `.env.example` is a template; if you create a real `.env`, keep it **out of git** (already in `.gitignore`).
-* Respect LinkedIn’s and ScrapingDog’s terms. Don’t go wild with parallelism.
-
----
-
-## 🧾 Data schema (July exports)
-
-```jsonc
-{
-  "job_id": "string",
-  "job_position": "string",
-  "company_name": "string",
-  "job_location": "string",
-  "job_link": "url",
-  "job_posting_date": "YYYY-MM-DD",
-  "description": "string (may be long)"
-}
-```
+* Don’t commit your real `.env` with the API key.  
+* `.env.example` is just a template.  
+* Already git-ignored: outputs, `.env`, caches.
 
 ---
 
-## 🛠️ Common recipes
+## 🖥️ Streamlit UI
 
-**Amsterdam only**
-
-```powershell
-$env:LOCATION = "Amsterdam"
-python .\li_july_2025_with_desc.py
+### Quickstart
+```bash
+python -m pip install -r requirements_streamlit.txt
+streamlit run streamlit_app.py
 ```
 
-**Hybrid roles only, last 30 days**
-
-```powershell
-$env:WORK_TYPE = "hybrid"
-$env:SORT_BY = "month"
-python .\li_july_2025_with_desc.py
-```
-
-**Company‑specific crawl**
-
-```powershell
-$env:FILTER_BY_COMPANY = "123456"
-python .\li_july_2025_with_desc.py
-```
-
----
-
-## 🤖 Optional: GitHub Actions (manual run)
-
-> Store your key as a **GitHub Secret** named `SCRAPINGDOG_API_KEY`.
-
-```yaml
-name: linkedin-july-scrape
-on:
-  workflow_dispatch:
-
-jobs:
-  run:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - run: pip install -r requirements.txt
-      - env:
-          SCRAPINGDOG_API_KEY: ${{ secrets.SCRAPINGDOG_API_KEY }}
-          FIELD: data engineer
-          LOCATION: Amsterdam
-        run: |
-          python li_july_2025_with_desc.py
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: linkedin-july-outputs
-          path: |
-            li_jobs_2025-07_with_desc.json
-            li_jobs_2025-07_with_desc.csv
-```
-
----
-
-## 🤝 Contributing
-
-* Fork → branch → PR. Keep scripts **idempotent**, add **docstrings**, and avoid breaking env‑var defaults.
-* If you change output fields, update this README and add a short schema note.
+### Features
+* Sidebar inputs map directly to env vars (`FIELD`, `LOCATION`, `MAX_OVERVIEWS`, etc).  
+* One-click scrape and load.  
+* Interactive filters (search, company, description length).  
+* Expandable job rows with links and full text.  
+* CSV/JSON download of filtered results.  
+* File uploader to browse old outputs without re-scraping.
 
 ---
 
 ## 📜 License
 
-Choose a license (MIT/Apache‑2.0). Add a `LICENSE` file. If you’re unsure, MIT is a good default for scripts.
+MIT (recommended) or Apache-2.0. Add a LICENSE file.
 
 ---
 
 ## 📣 Credits
 
-* [ScrapingDog – LinkedIn Jobs](https://docs.scrapingdog.com/linkedin-jobs-scraper/scrape-linkedin-jobs)
-* [ScrapingDog – Job Overview](https://docs.scrapingdog.com/linkedin-jobs-scraper/scrape-linkedin-job-overview)
-
----
-
-## 🧭 Roadmap
-
-* [ ] Multi‑keyword batch runner (merge + dedupe by `job_id`).
-* [ ] Optional export to PostgreSQL / S3.
-* [ ] Unit tests for overview parsers (schema drift).
-* [ ] Simple dashboard (Streamlit) to browse results.
+* [ScrapingDog LinkedIn Jobs API](https://docs.scrapingdog.com/linkedin-jobs-scraper/scrape-linkedin-jobs)  
+* [ScrapingDog Job Overview API](https://docs.scrapingdog.com/linkedin-jobs-scraper/scrape-linkedin-job-overview)  

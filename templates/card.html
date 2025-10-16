@@ -1,0 +1,23 @@
+<div class="job-card">
+  <div class="job-header">
+    <div>
+      <div class="job-title">${job_position}</div>
+      <div class="job-sub">
+        <span>${company_name}</span>
+        <span class="dot">•</span>
+        <span>${job_location}</span>
+        <span class="dot">•</span>
+        <span>${job_posting_date}</span>
+      </div>
+    </div>
+    %VIEWBTN%
+  </div>
+  <div class="chips">
+    ${chips}
+  </div>
+  <details class="desc" ${description_open}>
+    <summary>Job Description</summary>
+    <div class="desc-box">${description}<div class="desc-fade"></div></div>
+  </details>
+  ${enhanced_grid}
+</div>

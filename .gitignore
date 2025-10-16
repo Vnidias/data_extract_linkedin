@@ -1,16 +1,58 @@
-# Python
+﻿# Byte-compiled / optimized / C extension files
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
 *.egg-info/
-.env
-.venv/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+# Add your specific venv name if it's different
 venv/
-# OS
+.venv/
+env/
+.env/
+ENV/
+
+# Secrets and environment variables
+# NEVER commit secrets.
+.env
+*.env
+
+# IDE and editor configuration files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Testing & Coverage Reports
+.pytest_cache/
+.coverage
+htmlcov/
+nosetests.xml
+coverage.xml
+*.cover
+
+# OS-specific files
 .DS_Store
 Thumbs.db
-# Outputs
-*.json
-*.csv
-pages_raw.jsonl
